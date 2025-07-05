@@ -13,7 +13,7 @@ This is a simple GUI application built using **PyQt5** that displays the message
 
 ## 📸 Screenshot
 
-![screenshot](screenshot.png) 
+<p align="center"> <img src="screenshot.png" alt="Hello World GUI Screenshot" width="500"> </p>
 
 ---
 
