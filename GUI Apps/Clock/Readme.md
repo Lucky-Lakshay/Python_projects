@@ -13,7 +13,7 @@ A modern desktop **Clock App** built using **Python** and **PyQt5**. This app fe
   - Alarm status display
   - Built-in sound (auto-stops after 1 minute)
 - 🎵 **Sound Notifications** using `QSoundEffect`
-- 💅 **Dark-themed UI** with custom styling
+- 💅 **Dark-themed UI**
 - 🧩 Clean layout using stacked widgets for tabs
 
 ---
