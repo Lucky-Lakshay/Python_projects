@@ -18,15 +18,20 @@ class ClockApp(QWidget):
         self.elapsed_time = 0
         self.alarm_time = None
         self.alarm_set = False
+        self.alarm_triggered = False
 
         self.clock_timer = QTimer(self)
         self.stopwatch_timer = QTimer(self)
 
-        #alarm
+        # Alarm sound
         self.alarm_sound = QSoundEffect()
-        self.alarm_sound.setSource(QUrl.fromLocalFile(str(base_path / "assets" / "alarm.wav")))
-        # self.alarm_sound.setVolume(0.9)
-        self.alarm_sound.setLoopCount(QSoundEffect.Infinite)
+        alarm_sound_path = base_path / "assets" / "alarm.wav"
+        if alarm_sound_path.exists():
+            self.alarm_sound.setSource(QUrl.fromLocalFile(str(alarm_sound_path)))
+            self.alarm_sound.setLoopCount(QSoundEffect.Infinite)
+        else:
+            print("⚠️ Warning: alarm.wav not found!")
+
         self.auto_stop_timer = QTimer(self)
         self.auto_stop_timer.setSingleShot(True)
         self.auto_stop_timer.timeout.connect(self.stop_alarm)
@@ -113,6 +118,11 @@ class ClockApp(QWidget):
                         }
                         QPushButton:hover {
                             background-color: #787d7a;
+                        }
+                        QPushButton:checked {
+                            background-color: #ffd166;  /* Highlight color for active tab */
+                            color: #000;
+                            border: 2px solid #555;
                         }"""
         self.stopwatch_tab_btn.setStyleSheet(tab_style)
         self.alarm_tab_btn.setStyleSheet(tab_style)
@@ -144,12 +154,12 @@ class ClockApp(QWidget):
         now = QTime.currentTime()
         self.time_label.setText(now.toString("hh:mm:ss AP"))
 
-        if self.alarm_set and now.hour() == self.alarm_time.hour() and now.minute() == self.alarm_time.minute():
+        if self.alarm_set and not self.alarm_triggered and now >= self.alarm_time:
             self.alarm_status.setText("🔔 Alarm Ringing!")
-            if not self.alarm_sound.isPlaying():
+            if self.alarm_sound.source().isValid() and not self.alarm_sound.isPlaying():
                 self.alarm_sound.play()
-                self.auto_stop_timer.start(1 * 60 * 1000)
-            self.alarm_set = False
+                self.auto_stop_timer.start(60 * 1000)
+            self.alarm_triggered = True
 
     def create_stopwatch_tab(self):
         widget = QWidget()
@@ -182,11 +192,15 @@ class ClockApp(QWidget):
 
     def stop_stopwatch(self):
         self.stopwatch_timer.stop()
+        self.start_button.setEnabled(True)
+        self.stop_button.setEnabled(False)
 
     def reset_stopwatch(self):
-        self.stopwatch_timer.stop()
+        sself.stopwatch_timer.stop()
         self.elapsed_time = 0
         self.stopwatch_label.setText("00:00:00.00")
+        self.start_button.setEnabled(True)
+        self.stop_button.setEnabled(False)
 
     def update_stopwatch(self):
         self.elapsed_time += 10
@@ -232,17 +246,29 @@ class ClockApp(QWidget):
         return widget
 
     def set_alarm(self):
-        self.alarm_time = self.alarm_time_edit.time()
+        selected_time = self.alarm_time_edit.time()
+        now = QTime.currentTime()
+
+        if selected_time <= now:
+            self.alarm_status.setText("⚠️ Cannot set alarm in the past!")
+            return
+
+        self.alarm_time = selected_time
         self.alarm_set = True
+        self.alarm_triggered = False
         self.alarm_status.setText(f"Alarm set for {self.alarm_time.toString('hh:mm AP')}")
 
+
     def stop_alarm(self):
-        self.alarm_sound.stop()
+        if self.alarm_sound.isPlaying():
+            self.alarm_sound.stop()
         self.auto_stop_timer.stop()
         self.alarm_status.setText("Alarm stopped.")
+        self.alarm_triggered = False
 
     def cancel_alarm(self):
         self.alarm_set = False
+        self.alarm_triggered = False
         self.alarm_status.setText("Alarm canceled.")
 
 def main():
