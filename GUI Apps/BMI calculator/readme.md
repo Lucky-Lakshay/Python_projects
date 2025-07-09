@@ -18,7 +18,7 @@ It allows users to input their height and weight in multiple units (kg/lbs and m
 
 ## 📸 Screenshot
 
-![BMI Calculator Preview](assets/screenshot.jpg)  
+![BMI Calculator Preview](assets/screenshot.png)  
 
 ---
 
