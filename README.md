@@ -8,7 +8,7 @@ Welcome to my **Python Projects** repository! This repo contains a collection of
 
 | Category           | Projects Included                                               |
 |--------------------|------------------------------------------------------------------|
-| 🖥️ GUI Apps        | Hello World, Clock
+| 🖥️ GUI Apps        | Hello World, Clock, , Guess The Number, BMI Calculator
 
 ---
 > 📢 Stay tuned! More projects coming soon. Feel free to fork, clone, and explore.
